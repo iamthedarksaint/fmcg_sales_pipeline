@@ -5,4 +5,10 @@
 __pycache__/
 config  
 *data
+*profiles.yml
+*.log
+*.csv
+*.user.yml
+*target
+
 

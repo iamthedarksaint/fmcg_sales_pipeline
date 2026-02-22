@@ -49,8 +49,8 @@ def transform_transactions(df: pd.DataFrame) -> pd.DataFrame:
     df["discount_pct"] = df["discount_pct"].astype(float)
 
     # Add ingestion metadata
-    df["_is_returned"] = df["transaction_status"] == "Returned"
-    df["_loaded_at"] = pd.Timestamp.utcnow()
+    df["is_returned"] = df["transaction_status"] == "Returned"
+    df["loaded_at"] = pd.Timestamp.utcnow().isoformat()
 
     log.info(f"  Transactions clean: {len(df)} rows")
     return df
@@ -60,7 +60,7 @@ def transform_products(df: pd.DataFrame) -> pd.DataFrame:
     log.info("Transforming Products...")
     df = _snake_case(df.copy())
     df["is_active"] = df["is_active"].astype(bool)
-    df["_loaded_at"] = pd.Timestamp.utcnow()
+    df["loaded_at"] = pd.Timestamp.utcnow().isoformat()
     log.info(f"  Products clean: {len(df)} rows")
     return df
 
@@ -71,7 +71,7 @@ def transform_distributors(df: pd.DataFrame) -> pd.DataFrame:
     df["onboarding_date"] = pd.to_datetime(df["onboarding_date"])
     df["is_active"] = df["is_active"].astype(bool)
     df["region"] = df["region"].str.strip()
-    df["_loaded_at"] = pd.Timestamp.utcnow()
+    df["loaded_at"] = pd.Timestamp.utcnow().isoformat()
     log.info(f"  Distributors clean: {len(df)} rows")
     return df
 
@@ -81,7 +81,7 @@ def transform_salespersons(df: pd.DataFrame) -> pd.DataFrame:
     df = _snake_case(df.copy())
     df["hire_date"] = pd.to_datetime(df["hire_date"])
     df["region"] = df["region"].str.strip()
-    df["_loaded_at"] = pd.Timestamp.utcnow()
+    df["loaded_at"] = pd.Timestamp.utcnow().isoformat()
     log.info(f"  Salespersons clean: {len(df)} rows")
     return df
 
@@ -98,7 +98,7 @@ def transform_monthly_targets(df: pd.DataFrame) -> pd.DataFrame:
     )
     log.info(f"  Computed achievement_pct for {len(df)} rows")
 
-    df["_loaded_at"] = pd.Timestamp.utcnow()
+    df["loaded_at"] = pd.Timestamp.utcnow().isoformat()
     return df
 
 
@@ -108,7 +108,7 @@ def transform_date_table(df: pd.DataFrame) -> pd.DataFrame:
     df["date"] = pd.to_datetime(df["date"])
     df["is_weekend"] = df["is_weekend"].astype(bool)
     df["is_month_end"] = df["is_month_end"].astype(bool)
-    df["_loaded_at"] = pd.Timestamp.utcnow()
+    df["loaded_at"] = pd.Timestamp.utcnow().isoformat()
     log.info(f"  Date_Table clean: {len(df)} rows")
     return df
 
