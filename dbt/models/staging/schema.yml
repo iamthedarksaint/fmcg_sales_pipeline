@@ -1,0 +1,98 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: fct_transactions
+      - name: dim_products
+      - name: dim_distributors
+      - name: dim_salespersons
+      - name: fct_monthly_targets
+      - name: dim_date
+
+models:
+  - name: stg_transactions
+    description: "Cleaned transaction records. Includes all statuses; use is_returned flag to exclude returned records."
+    columns:
+      - name: transaction_id
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: salesperson_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_salespersons')
+              field: salesperson_id
+      - name: transaction_status
+        tests:
+          - accepted_values:
+              values: ['Completed', 'Returned', 'Pending']
+      - name: revenue_ngn
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: "Product dimension — 18 active SKUs across 5 categories."
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: category
+        tests:
+          - not_null
+      - name: is_active
+        tests:
+          - not_null
+
+  - name: stg_distributors
+    description: "Distributor dimension — 15 accounts across 6 regions."
+    columns:
+      - name: distributor_id
+        tests:
+          - unique
+          - not_null
+      - name: region
+        tests:
+          - not_null
+
+  - name: stg_salespersons
+    description: "Salesperson dimension — 15 field reps with monthly targets."
+    columns:
+      - name: salesperson_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_monthly_targets
+    description: "Monthly target vs actual per salesperson. achievement_pct computed during ETL."
+    columns:
+      - name: record_id
+        tests:
+          - unique
+          - not_null
+      - name: salesperson_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_salespersons')
+              field: salesperson_id
+      - name: achievement_pct
+        tests:
+          - not_null
+
+  - name: stg_date_table
+    description: "Calendar dimension spanning 2023–2024."
+    columns:
+      - name: date
+        tests:
+          - unique
+          - not_null

@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: mart_sales_performance
+    description: >
+      Salesperson-level monthly performance mart. Combines monthly targets 
+      with actual transaction revenue. Use this for achievement tracking,
+      MoM trend analysis, and regional performance comparisons.
+    columns:
+      - name: salesperson_id
+        tests:
+          - not_null
+      - name: month_start_date
+        tests:
+          - not_null
+      - name: achievement_pct
+        tests:
+          - not_null
+      - name: target_revenue_ngn
+        tests:
+          - not_null
+
+  - name: mart_distributor_product_summary
+    description: >
+      Distributor-level summary including return rates, total revenue, 
+      and gross profit. Used for distributor performance reviews and 
+      return rate analysis.
+    columns:
+      - name: distributor_id
+        description: "NULL for the 66 transactions where distributor_id was missing in source — flagged during ETL"
+      - name: return_rate_pct
+        tests:
+          - not_null

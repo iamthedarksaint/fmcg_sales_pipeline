@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: top_products_2024
+    description: >
+      Top 5 products by total revenue in 2024.
+      Excludes returned transactions.
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+      - name: total_revenue_ngn
+        tests:
+          - not_null
+
+  - name: region_mom_growth_q3_2024
+    description: >
+      Region with the highest Month-over-Month revenue growth in Q3 2024.
+      Uses LAG() window function partitioned by region.
+      Returns single row with the top performing region.
+    columns:
+      - name: region
+        tests:
+          - not_null
+      - name: mom_growth_pct
+        tests:
+          - not_null
+
+  - name: salesperson_achievement
+    description: >
+      Average target achievement percentage per salesperson across all months.
+      achievement_pct was blank in source and computed during ETL
+      as actual_revenue / target_revenue * 100.
+    columns:
+      - name: salesperson_id
+        tests:
+          - unique
+          - not_null
+      - name: avg_achievement_pct
+        tests:
+          - not_null
+
+  - name: distributor_return_rate
+    description: >
+      Distributor with the highest return rate.
+      Return rate = returned transactions / total transactions.
+      Excludes transactions with missing distributor_id.
+      Returns single row with the worst performing distributor.
+    columns:
+      - name: distributor_id
+        tests:
+          - not_null
+      - name: return_rate_pct
+        tests:
+          - not_null
+
+  - name: rolling_revenue_by_category
+    description: >
+      Rolling 3-month revenue trend by product category.
+      Uses SUM() OVER (ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+      to compute rolling totals and averages per category.
+      Excludes returned transactions.
+    columns:
+      - name: category
+        tests:
+          - not_null
+      - name: month_start
+        tests:
+          - not_null
+      - name: rolling_3m_revenue_ngn
+        tests:
+          - not_null
